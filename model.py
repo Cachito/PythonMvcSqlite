@@ -2,7 +2,7 @@
 Módulo model.py
 """
 import re
-import mysql.connector
+import sqlite3
 
 class Model:
     """
@@ -15,12 +15,7 @@ class Model:
         de la tabla noticias
         ordenados por fecha
         """
-        db_cacho = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            passwd="",
-            database="carro_maier"
-        )
+        db_cacho = sqlite3.connect('carro_maier.db')
 
         csr_cacho = db_cacho.cursor()
         sql_get = """
@@ -45,33 +40,15 @@ class Model:
     def create_data(self):
         """
         crea la base de datos carro_maier
-        si existe, la elimina
         """
         try:
-            db_cacho = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                passwd=""
-            )
-
-            try:
-                csr_cacho = db_cacho.cursor()
-
-                sql_drop = "DROP DATABASE IF EXISTS carro_maier"
-                sql_create = "CREATE DATABASE carro_maier"
-
-                csr_cacho.execute(sql_drop)
-                csr_cacho.execute(sql_create)
-
-                db_cacho.commit()
-                db_cacho.close()
-            except Exception as e:
-                db_cacho.rollback()
-                db_cacho.close()
-                raise Exception(f'Error al crear base de datos carro_maier: {str(e)}')
+            db_cacho = sqlite3.connect('carro_maier.db')
 
         except Exception as e:
-            raise Exception(f'error al abrir conexion: {str(e)}')
+            raise Exception(f'Error al crear base de datos carro_maier: {str(e)}')
+
+        finally:
+            db_cacho.close()
 
     def create_table(self):
         """
@@ -79,24 +56,20 @@ class Model:
         si existe, la elimina
         """
         try:
-            db_cacho = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                passwd="",
-                database="carro_maier"
-            )
+            db_cacho = sqlite3.connect('carro_maier.db')
+
             try:
                 csr_cacho = db_cacho.cursor()
 
                 sql_drop = "DROP TABLE IF EXISTS `Noticias`"
                 sql_create = """
                     CREATE TABLE `Noticias`(
-                        Id INT(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                        Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                         Fecha DATE,
-                        Medio VARCHAR(128) COLLATE utf8_spanish2_ci NOT NULL,
-                        Seccion VARCHAR(128) COLLATE utf8_spanish2_ci NOT NULL,
-                        Titulo VARCHAR(128) COLLATE utf8_spanish2_ci NOT NULL,
-                        Cuerpo TEXT COLLATE utf8_spanish2_ci NOT NULL
+                        Medio VARCHAR(128) COLLATE NOCASE NOT NULL,
+                        Seccion VARCHAR(128) COLLATE NOCASE NOT NULL,
+                        Titulo VARCHAR(128) COLLATE NOCASE NOT NULL,
+                        Cuerpo TEXT COLLATE NOCASE NOT NULL
                         )
                     """
                 csr_cacho.execute(sql_drop)
@@ -117,12 +90,7 @@ class Model:
         guarda una noticia
         """
         try:
-            db_cacho = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                passwd="",
-                database="carro_maier"
-                )
+            db_cacho = sqlite3.connect('carro_maier.db')
 
             try:
                 csr_cacho = db_cacho.cursor()
@@ -135,7 +103,7 @@ class Model:
                 if noticia.id == "0":
                     sql_insert = """
                         INSERT INTO Noticias (Fecha, Medio, Seccion, Titulo, Cuerpo)
-                            VALUES (%s, %s, %s, %s, %s)
+                            VALUES (?, ?, ?, ?, ?)
                         """
                     datos = (noticia.fecha, medio, seccion, titulo, cuerpo)
 
@@ -169,12 +137,7 @@ class Model:
         si lo encuentra
         """
         try:
-            db_cacho = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                passwd="",
-                database="carro_maier"
-            )
+            db_cacho = sqlite3.connect('carro_maier.db')
 
             try:
                 csr_cacho = db_cacho.cursor()
@@ -209,12 +172,7 @@ class Model:
         si lo encuentra
         """
         try:
-            db_cacho = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                passwd="",
-                database="carro_maier"
-            )
+            db_cacho = sqlite3.connect('carro_maier.db')
 
             try:
                 csr_cacho = db_cacho.cursor()
