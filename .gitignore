@@ -1,5 +1,6 @@
 # un problame que me dio google drive
 desktop.ini
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
