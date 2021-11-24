@@ -1,7 +1,6 @@
 """
 Módulo model.py
 """
-import re
 import sqlite3
 
 class Model:
@@ -91,10 +90,10 @@ class Model:
 
             csr_cacho = db_cacho.cursor()
 
-            medio = re.sub("[\"']", r"", noticia.medio)
-            seccion = re.sub("[\"']", r"", noticia.seccion)
-            titulo = re.sub("[\"']", r"", noticia.titulo)
-            cuerpo = re.sub("[\"']", r"", noticia.cuerpo)
+            medio = noticia.medio.replace("'", "").replace("\"", "")
+            seccion = noticia.seccion.replace("'", "").replace("\"", "")
+            titulo = noticia.titulo.replace("'", "").replace("\"", "")
+            cuerpo = noticia.cuerpo.replace("'", "").replace("\"", "")
 
             if noticia.id == "0":
                 sql_insert = """
